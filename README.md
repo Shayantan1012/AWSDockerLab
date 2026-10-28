@@ -1,4 +1,4 @@
-# AWS College Cloud Lab - Frontend, Backend and CI/CD
+# AWS College Cloud Lab - Frontend and Backend
 
 A simple lab registration app for your college submission. You create the Ubuntu EC2 instance yourself.
 
@@ -8,11 +8,9 @@ A simple lab registration app for your college submission. You create the Ubuntu
 - **Backend:** Flask REST API with input validation and duplicate roll-number checking.
 - **Storage:** SQLite saved in a Docker volume, so records survive a restart or redeployment.
 - **Deployment:** Nginx frontend and Python backend in two Docker containers.
-- **CI/CD:** GitHub Actions tests and deploys the app when you push to `main`.
 
 ```text
 Browser -> Nginx (port 80) -> Flask API -> SQLite database
-GitHub push -> Runner on EC2 -> Tests -> Deploy frontend + backend
 ```
 
 ## Run on your own computer
@@ -36,56 +34,33 @@ Use **Ubuntu Server 24.04 LTS, x86_64**, a public IPv4 address, and an instance 
 
 Security group: allow **SSH / TCP 22 / My IP** and **HTTP / TCP 80 / Anywhere IPv4**. The instance needs outbound internet access. Keep your downloaded `.pem` key outside this project.
 
-### 2. Upload and connect
+### 2. Open the AWS browser terminal
 
-Replace your private-key path and EC2 public IP in Windows PowerShell:
+In the EC2 console, select your instance, click **Connect**, select **EC2 Instance Connect**, and connect as **ubuntu**.
 
-```powershell
-cd 'C:/Users/SHAYANTAN BISWAS/Desktop/ITLAB'
-$key = 'C:/path/to/college-key.pem'
-$ec2Ip = 'YOUR_EC2_PUBLIC_IP'
-scp -i "$key" -r ./AWSDockerLab "ubuntu@${ec2Ip}:~/"
-ssh -i "$key" "ubuntu@$ec2Ip"
-```
-
-Upload a clean extracted copy of the submission ZIP to avoid copying local `.venv` files or databases. Inside the SSH terminal:
+For a fresh installation, run these commands in that AWS terminal:
 
 ```bash
-cd ~/AWSDockerLab
+sudo apt-get update
+sudo apt-get install -y git
+git clone https://github.com/Shayantan1012/AWSDockerLab.git
+cd AWSDockerLab
 bash setup.sh
 ```
 
 Open **http://YOUR_EC2_PUBLIC_IP/**. Try adding a student, searching, refreshing, and deleting the registration. Only port 80 needs public access for the app; the backend stays on Docker's private network.
 
-## Set up CI/CD once
+## Updating an existing deployment
 
-1. Create an empty **private GitHub repository** called `aws-college-lab`.
-2. Push the **contents** of this project as the repository root, including `.github/workflows/deploy.yml`:
-
-```powershell
-cd 'C:/Users/SHAYANTAN BISWAS/Desktop/ITLAB/AWSDockerLab'
-git init
-git add .
-git commit -m "College frontend backend and CI/CD"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/aws-college-lab.git
-git push -u origin main
-```
-
-3. In GitHub, open **Settings > Actions > Runners > New self-hosted runner**. Select **Linux, x64**.
-4. In your EC2 SSH terminal, run `cd ~`, then run the Download and Configure commands shown by GitHub. Add the label **ec2-lab** when prompted. Use the `ubuntu` account; do not run `config.sh` with sudo.
-5. In `~/actions-runner`, run:
+After committing updated project files to your GitHub repository, run these commands in the AWS browser terminal:
 
 ```bash
-sudo ./svc.sh install ubuntu
-sudo ./svc.sh start
+cd ~/AWSDockerLab
+git pull
+bash deploy.sh
 ```
 
-6. Open **Actions > AWS EC2 CI-CD > Run workflow** and select `main`. Later pushes to `main` run it automatically.
-
-CI starts a separate test stack on local port 8081, runs six backend tests, and checks the frontend and API. It removes only its temporary test data. CD updates the actual app while preserving its registrations volume. No AWS access keys are required in GitHub.
-
-To demonstrate a change, edit text in `index.html`, then commit and push. Keep the title `AWS EC2 Docker Lab` because the pipeline uses it for a page check. Refresh the public website after the workflow succeeds.
+For the already-cloned project, use `cd ~/AWSDockerLab`; you do not need to clone it again. Deployment is manual. The script rebuilds both containers while preserving saved registrations.
 
 ## Files and API
 
@@ -97,7 +72,6 @@ To demonstrate a change, edit text in `index.html`, then commit and push. Keep t
 | nginx.conf | Frontend server and API proxy |
 | compose.yaml | Runs both containers and stores data |
 | setup.sh / deploy.sh | EC2 setup and redeployment |
-| .github/workflows/deploy.yml | CI/CD pipeline |
 
 API: `GET /api/health`, `GET /api/registrations`, `POST /api/registrations`, and `DELETE /api/registrations/ID`.
 
@@ -115,10 +89,8 @@ Example JSON for adding a student:
 - Manual redeploy on EC2: `bash deploy.sh`
 - Stop without deleting data: `sudo docker compose -p college-lab stop`
 
-If a pipeline is queued, check the runner is online with label `ec2-lab`. If the public page is unreachable, check the instance public IP and HTTP security-group rule.
+If the public page is unreachable, check the instance public IP and HTTP security-group rule.
 
-Fill in **LAB-REPORT.md**. Submit screenshots of the EC2 instance, security-group rules, running containers, successful pipeline, and frontend with saved registrations. Include a screenshot of the API health response. Recreate your submission ZIP after adding your report and screenshots. Do not include keys or local runtime files.
+Fill in **LAB-REPORT.md**. Submit screenshots of the EC2 instance, security-group rules, running containers, and frontend with saved registrations. Include a screenshot of the API health response. Recreate your submission ZIP after adding your report and screenshots. Do not include keys or local runtime files.
 
-This is a college demo without login; use sample student details. After your demonstration, terminate the lab instance, remove the GitHub runner, and review remaining AWS disks/IP resources and billing.
-
-Reference: [GitHub runner setup](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/add-runners).
+This is a college demo without login; use sample student details. After your demonstration, terminate the lab instance and review remaining AWS disks/IP resources and billing.
