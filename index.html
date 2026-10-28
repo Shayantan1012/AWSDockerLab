@@ -9,30 +9,30 @@
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <header><div class="header-inner"><a class="brand" href="/" aria-label="Cloud Lab home"><span class="brand-mark">CL</span> Cloud Lab</a><span class="course">INTERNET TECHNOLOGY / LAB 06</span></div></header>
+  <header><div class="header-inner"><a class="brand" href="/" aria-label="Cloud Lab home">Student Registration</a><span class="course">College Cloud Lab</span></div></header>
   <main>
-    <div class="intro"><div><p class="eyebrow">COLLEGE CLOUD COMPUTING LABORATORY</p><h1>One lab. Connected.</h1><p class="subtitle">Register for the cloud lab and manage your class list in one place.</p></div><span class="connection" id="connection" role="status">Checking connection...</span></div>
+    <div class="intro"><div><h1>Student Registration System</h1><p class="subtitle">Add student details below. You can search or delete students from the list.</p></div><span class="connection" id="connection" role="status">Checking connection...</span></div>
     <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
     <div class="workspace">
       <section class="panel form-panel" aria-labelledby="form-title">
-        <div class="section-label">01 / REGISTER</div><h2 id="form-title">Join the lab</h2><p class="muted">Enter your student details to get started.</p>
+        <h2 id="form-title">Add a student</h2><p class="muted">Fill in all three fields, then click Add Student.</p>
         <form id="registration-form">
           <label for="name">Full name</label><input id="name" name="name" maxlength="80" autocomplete="name" placeholder="e.g. Ananya Sharma" required>
           <label for="roll-number">Roll number</label><input id="roll-number" name="roll_number" maxlength="30" placeholder="e.g. CSE101" required>
-          <label for="department">Department</label><input id="department" name="department" maxlength="60" list="departments" placeholder="Select or type department" required>
+          <label for="department">Department</label><input id="department" name="department" maxlength="60" list="departments" placeholder="e.g. CSE or IT" required>
           <datalist id="departments"><option value="CSE"><option value="ECE"><option value="IT"><option value="EEE"><option value="ME"><option value="CE"></datalist>
-          <button class="primary" id="submit-button" type="submit">Add registration <span aria-hidden="true">→</span></button>
-        </form><p class="form-note">One registration per roll number.</p>
+          <button class="primary" id="submit-button" type="submit">Add Student</button>
+        </form><p class="form-note">Each roll number can be added only once.</p>
       </section>
       <section class="panel list-panel" aria-labelledby="list-title">
-        <div class="list-heading"><div><div class="section-label">02 / CLASS LIST</div><h2 id="list-title">Registrations <span class="count" id="count">0</span></h2></div><button class="secondary" id="refresh" type="button">Refresh</button></div>
-        <label class="sr-only" for="search">Search registrations</label><input class="search" id="search" type="search" placeholder="Search name, roll number or department">
-        <div class="table-wrap"><table><thead><tr><th>Student</th><th>Roll number</th><th>Department</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="registrations"></tbody></table></div>
-        <div class="empty" id="empty"><span class="empty-icon" aria-hidden="true">☷</span><h3 id="empty-title">Loading registrations</h3><p id="empty-description">Connecting to the lab server...</p></div>
+        <div class="list-heading"><div><h2 id="list-title">Student list <span class="count" id="count">0</span></h2></div><button class="secondary" id="refresh" type="button">Refresh</button></div>
+        <label class="sr-only" for="search">Search students</label><input class="search" id="search" type="search" placeholder="Search name, roll number or department">
+        <div class="table-wrap"><table><thead><tr><th>Student</th><th>Roll number</th><th>Department</th><th>Action</th></tr></thead><tbody id="registrations"></tbody></table></div>
+        <div class="empty" id="empty"><h3 id="empty-title">Loading registrations</h3><p id="empty-description">Connecting to the lab server...</p></div>
         <p class="list-footer" id="list-footer">Records are saved on the server.</p>
       </section>
     </div>
-    <footer><span>Cloud Lab <span class="footer-dot">/</span> College project</span><span>AWS EC2 · Docker · Nginx · Flask</span></footer>
+    <footer><span>College Cloud Computing Project</span><span>AWS EC2 · Docker · Nginx · Flask</span></footer>
   </main>
 </body>
 </html>

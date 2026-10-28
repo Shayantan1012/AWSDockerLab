@@ -52,8 +52,8 @@ function render() {
     rows.append(row);
   }
   document.getElementById("empty").hidden = matches.length > 0;
-  document.getElementById("empty-title").textContent = query ? "No matching registrations" : "Your class list starts here";
-  document.getElementById("empty-description").textContent = query ? "Try another name, roll number or department." : "Add the first student using the registration form.";
+  document.getElementById("empty-title").textContent = query ? "No matching students" : "No students added yet";
+  document.getElementById("empty-description").textContent = query ? "Try another name, roll number or department." : "Use the form to add your first student.";
   document.getElementById("list-footer").textContent = `Showing ${matches.length} of ${registrations.length} registrations · Saved on the server`;
 }
 
@@ -64,10 +64,10 @@ async function loadRegistrations() {
   try {
     registrations = await api("registrations");
     render();
-    connection.textContent = "Backend connected";
+    connection.textContent = "Server connected";
     connection.className = "connection connected";
   } catch (error) {
-    connection.textContent = "Backend unavailable";
+    connection.textContent = "Server unavailable";
     connection.className = "connection disconnected";
     showNotice(error.message, true);
     if (!registrations.length) {
